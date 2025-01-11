@@ -3,8 +3,11 @@ const app = express();
 const cors = require("cors");
 const Data = require("./data/data");
 const dotenv = require("dotenv");
+const connectDB = require("./config/db");
 
 dotenv.config(); //MAKING USE OF THE ENV DATA
+
+connectDB();  //CALLING THE DATABASE CONNECTION
 
 app.use(express.json());
 app.use(cors());
