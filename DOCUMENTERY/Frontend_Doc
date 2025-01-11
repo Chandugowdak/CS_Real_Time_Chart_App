@@ -1,0 +1,5 @@
+CHAKREUI =  we use this as a build in component [BUTTON] as bootstrap
+REACT - ROUTER = we use this to navigate between pages
+AXIOS = we use this to fetch data from the backend
+USE-EFFECT = we use this to fetch data from the backend and re-render the component when it will be updated
+USE-STATE = we use this to store data in the component

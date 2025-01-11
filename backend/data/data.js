@@ -1,4 +1,4 @@
- const J_Data = [
+ const Data = [
   {
     isGroupChat: false,
     users: [
@@ -108,4 +108,4 @@
 ];
 
 
-module.exports = J_Data;
+module.exports = Data;

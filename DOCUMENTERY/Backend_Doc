@@ -1,0 +1,8 @@
+EXPRESS = we use it to create a server
+CORS = we use it to allow the frontend to connect to the backend
+dotenv = we use it to hide the port number and the database url
+Data = we use it to store the data that we will be sending to the frontend
+Main.js = we use it to create the server and to connect it to the database
+CHART-MODEL  = scheme of the data that we will be sending to the frontend and  used in charting
+MESSAGE-MODEL = scheme of the data that we will be sending to the frontend and  used in messaging
+USER-MODEL = scheme of the data that we will be sending to the frontend and  used in authentication
