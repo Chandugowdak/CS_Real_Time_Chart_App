@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     password: { type: "String", required: true },//GET THE PASSWORD
     pic: {
       type: "String",
-      required: true,
+      
       default:    //THIS EILL BE SET IF THE USER DO NOT GIVE THE IMAGE
         "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
@@ -21,17 +21,19 @@ const userSchema = mongoose.Schema(
   { timestaps: true }  //GET THE TIME STAMP
 );
 
+// THIS IS USED TO COMPAIR THE DATA
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+//THIS WILL HASH [ENCRYPT] THE PASSWORD BEFORE SAVING IT TO THE DATABASE
 userSchema.pre("save", async function (next) {
   if (!this.isModified) {
-    next();
+    next(); //MOVE TO NEXT
   }
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  const salt = await bcrypt.genSalt(10); //GENERATE THE SALT
+  this.password = await bcrypt.hash(this.password, salt);// HASH THE PASSWORD
 });
 
 const User = mongoose.model("User", userSchema);
