@@ -78,7 +78,7 @@ const Signup = () => {
       localStorage.setItem("userInfo", JSON.stringify(data));
       setPicLoading(false);
       //TO MOVE TO THE CHAT PAGE IF REGISTRATION IS SUCCESSFUL
-      history.push("/chats");
+      history.push("/lo");
     } catch (error) {
       toast({
         title: "Error Occured!",

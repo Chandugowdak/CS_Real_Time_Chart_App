@@ -6,11 +6,11 @@ import SignUp from "../Components/Authentication/SignUp";
 
 function Homepage() {
   const history = useHistory();
-
+  //THIS WILL PUSH BACK TO CHART PAGE IF THE USER IS LOGINNED
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
 
-    if (user) history.push("/chats");
+    if (user) history.push("/lo");
   }, [history]);
 
   return (
