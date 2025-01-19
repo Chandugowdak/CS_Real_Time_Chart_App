@@ -71,7 +71,7 @@ const allUsers = asyncHandler(async (req, res) => {
             { name: { $regex: req.query.search, $options: "i" } },
             { email: { $regex: req.query.search, $options: "i" } },
         ],
-    } : {};
+    } : {}; //HEAR {} SAY IF THE USER NAME AND EMAIL FOUND THEN DO OR ELSE DONT DO ANYTHING
     const users = await User.find(keyword).find({ _id: { $ne: req.user._id } }); //THIS GIVE THE ID EXCEPT THE CURRENT USER
     res.send(users);
         })

@@ -2,72 +2,78 @@ const asyncHandler = require('express-async-handler');
 const Chart = require("../models/chatModel");
 const User = require('../models/userModel');
 
-const accessChart = asyncHandler(async (req, res) => {
 
-    const { userId } = req.body;
-    //NOT EXIST USER ID
-    if (!userId) {
-        console.log("userId is not defined")
-        return res.status(400);
+//ACCESS THE CHART
+const accessChart = asyncHandler(async (req, res) => {
+  const {userId} = req.body;
+
+  // Validate if userId is provided
+  if (!userId) {
+    console.log("userId is not defined");
+    return res.status(400).send({ message: "userId is required" });
+  }
+
+  try {
+    // Find if a chat exists between the current user and the provided userId
+    var isChart = await Chart.find({
+      isGroupChart: false,
+      $and: [
+        { users: { $elemMatch: { $eq: req.user._id } } }, // Ensure this is _id, not _Id
+        { users: { $elemMatch: { $eq: userId } } },
+      ],
+    })
+      .populate("users", "-password")
+      .populate("latestMessage");
+
+    // Populate sender details in the latestMessage
+    isChart = await User.populate(isChart, {
+      path: "latestMessage.sender",
+      select: "name pic email",
+    });
+
+    // If a chart exists, return it
+    if (isChart.length > 0) {
+      return res.send(isChart[0]);
     }
 
-    //FIND USER BY ID
-    var isChart = await Chart.find({
-        isGroupChart: false,
-        $and: [
-            { users: { $elemMatch: { $eq: user._Id } } },
-            { users: { $elemMatch: { $eq: userId } } }
-        ]
+    // Otherwise, create a new chart
+    const chartData = {
+      chartName: "sender",
+      isGroupChart: false,
+      users: [req.user._id, userId],
+    };
 
-    }).populate('users', "-password")
-        .populate("latestMessage");
-    
-    isChart = await User.populate(isChart, {
-        path: "latestMessage.sender",
-        select: "name pic email"
-    })
+    const createdChart = await Chart.create(chartData);
+    const fullChart = await Chart.findOne({ _id: createdChart._id }).populate(
+      "users",
+      "-password"
+    );
 
-    
-    if (isChart.lenght > 0) {
-        res.send(isChart[0]);
-    } else {
-        var chartData = {
-            
-            chartName: "sender",
-            isGroupChart: false,
-            users: [req.user._id, userId]
-        };
-        try {
-            const createdChart = await Chart.create(chartData);
-            const fullChart = await Chart.findOne({ _id: createdChart._id }).populate('users', "-password");
-            res.status(200).send(fullChart);
-            
-        } catch (error) {
-            res.status(400);
-            throw new Error(error.message);
-        }
-   }
-    
-    
-})
+    return res.status(200).send(fullChart);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: error.message });
+  }
+});
 
 
 //FETCH THE USER CHART ARRAY
 const fetchChart = asyncHandler
     (async (req, res) => {
         try {
-            Chart.find({ users: { $elemMatch: { $eq: req.user._id } } })
+            
+                Chart.find({ users: { $elemMatch: { $eq: req.user._id } } })
                 .populate('users', "-password")
                 .populate("groupAdmin" , "-password")
                 .populate("latestMessage")
                 .sort({ updatedAt: -1 }) //SORT THE NEW AND OLD MESSAGE
-                .then(async(result) => {
-                    result = await User.populate(result, {
-                        path: "latestMessage.sender",
-                        select: "name pic email"
-                    })
+                .then(async(results) => {
+                  results = await User.populate(results, {
+                    path: "latestMessage.sender",
+                    select: "name pic email",
+                  });
+                  res.status(200).send(results); //SEND THE RESULT OF THE CHART
                 })
-            res.status(200).send(result); //SEND THE RESULT OF THE CHART
         
         }
         catch (err) {
