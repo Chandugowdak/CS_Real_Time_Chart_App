@@ -1,4 +1,4 @@
-import { useChatStore } from "../store/useChatStore";
+import { useChatStore } from "../store/UseChatStore";
 import { useEffect, useRef } from "react";
 
 import ChatHeader from "./ChatHeader";
@@ -37,7 +37,7 @@ const ChatContainer = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
+//IF THE MESSAGE IS LOADING
   if (isMessagesLoading) {
     return (
       <div className="flex flex-col flex-1 overflow-auto">
@@ -50,6 +50,7 @@ const ChatContainer = () => {
 
   return (
     <div className="flex flex-col flex-1 overflow-auto">
+     {/* //TOP OF THE CHART SECTION  */}
       <ChatHeader />
 
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
@@ -97,3 +98,4 @@ const ChatContainer = () => {
   );
 };
 export default ChatContainer;
+
