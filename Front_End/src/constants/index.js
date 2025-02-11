@@ -1,3 +1,5 @@
+//THIS IS USED TO MANAGE THE THEME OF WEB
+
 export const THEMES = [
   "light",
   "dark",

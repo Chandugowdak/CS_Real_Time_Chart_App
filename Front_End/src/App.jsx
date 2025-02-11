@@ -9,10 +9,13 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import { useAuthStore } from "./store/UseAuthStore.jsx"; // Corrected the import to match the case
 import {Loader} from 'lucide-react'
 import { Toaster } from "react-hot-toast";
+import { UseThemeStore } from "./store/UseThemeStore.jsx";
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth  } = useAuthStore();
+    const { theme } = UseThemeStore(); //THIS IS USED TO GET THE CURRENT THEME
 
+  
   useEffect(() => {
     const checkAuthentication = async () => {
       
@@ -29,7 +32,7 @@ const App = () => {
     );
 
   return (
-    <>
+    <div data-theme={theme}>
       <Navbar />
       <Routes>
         <Route path="/" element={authUser ? <HomePage />: <Navigate to="/login"/>} />
@@ -39,7 +42,7 @@ const App = () => {
         <Route path="/profile" element={authUser ?<ProfilePage /> : <Navigate to="/login" />} />
       </Routes>
       <Toaster />
-    </>
+    </div>
   );
 };
 

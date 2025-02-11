@@ -104,29 +104,59 @@ export const logout = (req, res) => {
 
 };
 
-//LOGIC FRO THE UPDATE THE PROFILE
+//LOGIC FOR THE UPDATE THE PROFILE
 export const updateProfile = async (req, res) => {
-    try {
+  try {
+    const userId = req.user._id;
 
-        const { profilePic } = req.body;
-        const user = req.user._id;
-        if(!profilePic){
-            return res.status(400).json({ message: "Invalid DATA" });
-        }
-        //THIS WILL UPDATE THE PROFILE PIC
-        const uploadResponse = await cloudinary.uploader.upload(profilePic)
-          
-            
-        const updatedUser = await User.findByIdAndUpdate(user, { profilePic: uploadResponse.secure_url }, { new: true });
-        res.status(200).json(updatedUser);
-        
-     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Something went wrong" });
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
     }
-    
+
+    console.log("📤 Uploading profile picture to Cloudinary...");
+
+    // ✅ Upload image to Cloudinary with folder & public ID
+    const uploadResponse = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: "user_profiles",
+            public_id: `profile_${userId}`,
+          },
+          (error, result) => {
+            if (error) {
+              console.error("❌ Cloudinary upload failed:", error);
+              reject(error);
+            } else {
+              console.log("✅ Image uploaded:", result.secure_url);
+              resolve(result.secure_url);
+            }
+          }
+        )
+        .end(req.file.buffer);
+    });
+
+    // ✅ Update User Profile Picture in Database
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse },
+      { new: true }
+    );
+
+    // ❌ User Not Found
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("✅ Profile picture updated:", updatedUser);
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error("❌ Error updating profile:", err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
+
 
 
 //LOGIC TO GET THE DATA

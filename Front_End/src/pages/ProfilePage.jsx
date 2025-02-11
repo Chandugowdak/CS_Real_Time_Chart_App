@@ -7,20 +7,14 @@ const ProfilePage = () => {
   const [selectedImg, setSelectedImg] = useState(null);
 
   //HANDEL THE IMAGE UPLOAD
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
+  setSelectedImg(URL.createObjectURL(file)); // ✅ Show preview before upload
+  await updateProfile(file); // ✅ Send file instead of base64
+};
 
-    reader.readAsDataURL(file);
-
-    reader.onload = async () => {
-      const base64Image = reader.result;
-      setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
-    };
-  };
 
   return (
     <div className="h-screen pt-20">
